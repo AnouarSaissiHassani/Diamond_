@@ -11,11 +11,7 @@ if (dbUrl && dbUrl.includes('6543') && !dbUrl.includes('pgbouncer=true')) {
 }
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  datasources: {
-    db: {
-      url: dbUrl
-    }
-  }
+  datasourceUrl: dbUrl
 });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
