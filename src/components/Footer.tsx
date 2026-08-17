@@ -45,6 +45,7 @@ export default function Footer() {
               <li><Link href="/rendez-vous" className="text-sm text-[#6b645c] hover:text-[#a89f91] transition-colors">Rendez-vous</Link></li>
               <li><Link href="/galerie" className="text-sm text-[#6b645c] hover:text-[#a89f91] transition-colors">Galerie Avant/Après</Link></li>
               <li><Link href="/#faq" className="text-sm text-[#6b645c] hover:text-[#a89f91] transition-colors">FAQ</Link></li>
+              <li><Link href="/admin" className="text-sm text-[#6b645c] hover:text-[#a89f91] transition-colors">Administration</Link></li>
             </ul>
           </div>
 
