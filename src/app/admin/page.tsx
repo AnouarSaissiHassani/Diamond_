@@ -9,6 +9,8 @@ export default async function DashboardPage() {
   const startDay = startOfDay(today);
   const endDay = endOfDay(today);
   const startMonth = startOfMonth(today);
+  const sixMonthsAgo = startOfMonth(subMonths(today, 5));
+  const previousMonthStart = startOfMonth(subMonths(today, 1));
 
   try {
     // Fetch all stats in parallel to avoid Netlify 10s function timeout
