@@ -5,6 +5,8 @@ import { rateLimit } from "@/lib/rate-limit"
 import bcrypt from "bcryptjs"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET || "fallback_secret_diamond_clinic_2026_super_secure_string",
+  trustHost: true,
   session: { strategy: "jwt" },
   providers: [
     CredentialsProvider({
