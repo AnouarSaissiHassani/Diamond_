@@ -6,7 +6,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-let connectionString = process.env.DATABASE_URL || '';
+let connectionString = process.env.SUPABASE_URL || process.env.DATABASE_URL || '';
 // Clean up any pgbouncer=true because pg node driver doesn't understand it
 if (connectionString.includes('pgbouncer=true')) {
   connectionString = connectionString.replace('?pgbouncer=true', '').replace('&pgbouncer=true', '');
