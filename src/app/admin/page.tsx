@@ -57,7 +57,7 @@ export default async function DashboardPage() {
     const year = d.getFullYear();
     
     const monthRevenus = facturesLast6Months
-      .filter(f => f.date.getMonth() === monthIndex && f.date.getFullYear() === year)
+      .filter((f: any) => f.date.getMonth() === monthIndex && f.date.getFullYear() === year)
       .reduce((sum: number, f: any) => sum + f.totalAmount, 0);
 
     chartData.push({

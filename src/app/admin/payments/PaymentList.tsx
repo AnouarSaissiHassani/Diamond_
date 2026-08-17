@@ -20,14 +20,14 @@ export default function PaymentList({ payments, factures, clients }: { payments:
   const filteredPayments = useMemo(() =>
     payments.filter(p => {
       if (filter === "Tous") return true;
-      const factureStatus = factures.find(f => f.id === p.factureId)?.status;
+      const factureStatus = factures.find((f: any) => f.id === p.factureId)?.status;
       return factureStatus === filter;
     }),
     [filter, payments, factures]
   );
 
-  const totalComplété = factures.filter(f => f.status === "PAID").reduce((s, f) => s + f.totalAmount, 0);
-  const totalEnAttente = factures.filter(f => f.status === "PENDING" || f.status === "PARTIAL").reduce((s, f) => s + f.totalAmount, 0);
+  const totalComplété = factures.filter((f: any) => f.status === "PAID").reduce((s: number, f: any) => s + f.totalAmount, 0);
+  const totalEnAttente = factures.filter((f: any) => f.status === "PENDING" || f.status === "PARTIAL").reduce((s: number, f: any) => s + f.totalAmount, 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,9 +167,9 @@ export default function PaymentList({ payments, factures, clients }: { payments:
                   <label className="text-xs text-stone-500 font-medium">Facture (Optionnel)</label>
                   <select value={formData.factureId} onChange={e => setFormData({...formData, factureId: e.target.value})} className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:border-[#a89f91] bg-white">
                     <option value="">Sélectionner une facture...</option>
-                    {factures.filter(f => f.clientId === formData.clientId && f.status !== "PAID").map(f => 
+                    {factures.filter((f: any) => f.clientId === formData.clientId && f.status !== "PAID").map((f: any) => (
                       <option key={f.id} value={f.id}>{f.totalAmount} DH - {new Date(f.date).toLocaleDateString()}</option>
-                    )}
+                    ))}
                   </select>
                 </div>
                 <div className="space-y-1">

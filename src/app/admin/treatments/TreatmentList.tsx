@@ -16,8 +16,8 @@ export default function TreatmentList({ treatments }: { treatments: any[] }) {
   // but since treatments array doesn't include the aggregated counts out of the box, 
   // we'll just display the price and a placeholder for stats.
   
-  const totalRdvMois = treatments.reduce((s, t) => s + (t.reservations?.length || 0), 0);
-  const totalRevMois = treatments.reduce((s, t) => {
+  const totalRdvMois = treatments.reduce((s: number, t: any) => s + (t.reservations?.length || 0), 0);
+  const totalRevMois = treatments.reduce((s: number, t: any) => {
     return s + (t.reservations?.length || 0) * t.price;
   }, 0);
 
