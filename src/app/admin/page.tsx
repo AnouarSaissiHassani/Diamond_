@@ -25,9 +25,9 @@ export default async function DashboardPage() {
       totalFacturesMoisPrecedent,
       clientsMoisPrecedent
     ] = await Promise.all([
-      prisma.facture.aggregate({
-        _sum: { totalAmount: true },
-        where: { date: { gte: startMonth } }
+      prisma.facture.findMany({
+        where: { date: { gte: startMonth } },
+        select: { totalAmount: true }
       }),
       prisma.client.count({
         where: { createdAt: { gte: startMonth } }
@@ -52,17 +52,17 @@ export default async function DashboardPage() {
         where: { date: { gte: sixMonthsAgo } },
         select: { date: true, totalAmount: true }
       }),
-      prisma.facture.aggregate({
-        _sum: { totalAmount: true },
-        where: { date: { gte: previousMonthStart, lt: startMonth } }
+      prisma.facture.findMany({
+        where: { date: { gte: previousMonthStart, lt: startMonth } },
+        select: { totalAmount: true }
       }),
       prisma.client.count({
         where: { createdAt: { gte: previousMonthStart, lt: startMonth } }
       })
     ]);
 
-    const revenusMois = totalFacturesMois._sum.totalAmount || 0;
-    const revenusMoisPrecedent = totalFacturesMoisPrecedent._sum.totalAmount || 0;
+    const revenusMois = totalFacturesMois.reduce((acc: number, f: any) => acc + f.totalAmount, 0);
+    const revenusMoisPrecedent = totalFacturesMoisPrecedent.reduce((acc: number, f: any) => acc + f.totalAmount, 0);
 
     const monthsList = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
     const chartData = [];
