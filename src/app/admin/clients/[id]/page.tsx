@@ -22,7 +22,7 @@ export default async function ClientDetailsPage({ params }: { params: Promise<{ 
   }
 
   const nbSoins = client.reservations.length;
-  const totalSpent = client.factures.reduce((sum, f) => sum + f.totalAmount, 0);
+  const totalSpent = client.factures.reduce((sum: number, f: any) => sum + f.totalAmount, 0);
 
   return (
     <div className="space-y-6">
