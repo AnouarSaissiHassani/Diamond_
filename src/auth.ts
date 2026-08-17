@@ -32,9 +32,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) return null
 
         // Check against env variables for default admin
+        const adminPassword = process.env.ADMIN_PASSWORD || "diamond2026";
         if (
           credentials.email === "admin@diamondclinic.com" &&
-          credentials.password === process.env.ADMIN_PASSWORD
+          credentials.password === adminPassword
         ) {
           return { id: "admin", email: "admin@diamondclinic.com", name: "Admin" }
         }

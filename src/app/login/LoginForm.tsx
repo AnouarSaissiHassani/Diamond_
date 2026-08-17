@@ -18,17 +18,23 @@ export default function LoginForm() {
     setIsSubmitting(true);
     setError("");
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-    
-    if (res?.ok) {
-      router.push("/admin");
-      router.refresh();
-    } else {
-      setError("Identifiants incorrects.");
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+      
+      if (res?.ok) {
+        router.push("/admin");
+        router.refresh();
+      } else {
+        setError("Identifiants incorrects.");
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Une erreur inattendue est survenue.");
       setIsSubmitting(false);
     }
   };
