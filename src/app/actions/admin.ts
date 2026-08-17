@@ -67,7 +67,7 @@ export async function createPayment(data: { clientId: string; factureId?: string
     // Check if facture is fully paid
     const facture = await prisma.facture.findUnique({ where: { id: data.factureId }, include: { reglements: true } });
     if (facture) {
-      const totalPaid = facture.reglements.reduce((sum, r) => sum + r.amount, 0) + data.amount;
+      const totalPaid = facture.reglements.reduce((sum: number, r: any) => sum + r.amount, 0) + data.amount;
       if (totalPaid >= facture.totalAmount) {
         await prisma.facture.update({ where: { id: data.factureId }, data: { status: "PAID" } });
       } else {
