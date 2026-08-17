@@ -1,25 +1,31 @@
-import { auth } from "./auth"
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export default auth((req) => {
-  const isLoggedIn = !!req.auth;
-  const isAuthPage = req.nextUrl.pathname.startsWith('/login');
+export function proxy(request: NextRequest) {
+  // Check for NextAuth v5 session cookies (handles both HTTP and HTTPS environments)
+  const token = request.cookies.get('authjs.session-token') || request.cookies.get('__Secure-authjs.session-token');
+  const isLoggedIn = !!token;
+  
+  const isAuthPage = request.nextUrl.pathname.startsWith('/login');
 
   if (isAuthPage) {
     if (isLoggedIn) {
-      return Response.redirect(new URL('/admin', req.nextUrl));
+      return NextResponse.redirect(new URL('/admin', request.url));
     }
-    return;
+    return NextResponse.next();
   }
 
-  // Protect /admin and any other routes if needed
-  if (req.nextUrl.pathname.startsWith('/admin') && !isLoggedIn) {
-    let from = req.nextUrl.pathname;
-    if (req.nextUrl.search) {
-      from += req.nextUrl.search;
+  // Protect /admin routes
+  if (request.nextUrl.pathname.startsWith('/admin') && !isLoggedIn) {
+    let from = request.nextUrl.pathname;
+    if (request.nextUrl.search) {
+      from += request.nextUrl.search;
     }
-    return Response.redirect(new URL(`/login?from=${encodeURIComponent(from)}`, req.nextUrl));
+    return NextResponse.redirect(new URL(`/login?from=${encodeURIComponent(from)}`, request.url));
   }
-})
+  
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
