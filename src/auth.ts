@@ -16,8 +16,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        // Obtenir l'IP du client depuis les headers
-        const ip = req?.headers?.get("x-forwarded-for") || req?.headers?.get("x-real-ip") || "unknown-ip";
+        // Obtenir l'IP de manière sécurisée (req.headers peut ne pas avoir la méthode get)
+        let ip = "unknown-ip";
+        if (req?.headers && typeof req.headers.get === 'function') {
+          ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown-ip";
+        }
         
         // Autoriser 5 requêtes par fenêtre de 1 minute
         const { success } = rateLimit(ip, 5, 60000);
