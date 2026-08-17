@@ -11,43 +11,56 @@ export default async function DashboardPage() {
   const startMonth = startOfMonth(today);
 
   try {
-    // Fetch stats
-    const totalFacturesMois = await prisma.facture.aggregate({
-      _sum: { totalAmount: true },
-      where: { date: { gte: startMonth } }
-    });
+    // Fetch all stats in parallel to avoid Netlify 10s function timeout
+    const [
+      totalFacturesMois,
+      nouveauxClients,
+      rdvMois,
+      rdvAttente,
+      todayReservations,
+      recentFactures,
+      facturesLast6Months,
+      totalFacturesMoisPrecedent,
+      clientsMoisPrecedent
+    ] = await Promise.all([
+      prisma.facture.aggregate({
+        _sum: { totalAmount: true },
+        where: { date: { gte: startMonth } }
+      }),
+      prisma.client.count({
+        where: { createdAt: { gte: startMonth } }
+      }),
+      prisma.reservation.count({
+        where: { date: { gte: startMonth } }
+      }),
+      prisma.reservation.count({
+        where: { status: "PENDING" }
+      }),
+      prisma.reservation.findMany({
+        where: { date: { gte: startDay, lte: endDay } },
+        include: { client: true, treatment: true },
+        orderBy: { date: 'asc' }
+      }),
+      prisma.facture.findMany({
+        take: 5,
+        orderBy: { date: 'desc' },
+        include: { client: true }
+      }),
+      prisma.facture.findMany({
+        where: { date: { gte: sixMonthsAgo } },
+        select: { date: true, totalAmount: true }
+      }),
+      prisma.facture.aggregate({
+        _sum: { totalAmount: true },
+        where: { date: { gte: previousMonthStart, lt: startMonth } }
+      }),
+      prisma.client.count({
+        where: { createdAt: { gte: previousMonthStart, lt: startMonth } }
+      })
+    ]);
+
     const revenusMois = totalFacturesMois._sum.totalAmount || 0;
-
-    const nouveauxClients = await prisma.client.count({
-      where: { createdAt: { gte: startMonth } }
-    });
-
-    const rdvMois = await prisma.reservation.count({
-      where: { date: { gte: startMonth } }
-    });
-
-    const rdvAttente = await prisma.reservation.count({
-      where: { status: "PENDING" }
-    });
-
-    const todayReservations = await prisma.reservation.findMany({
-      where: { date: { gte: startDay, lte: endDay } },
-      include: { client: true, treatment: true },
-      orderBy: { date: 'asc' }
-    });
-
-    const recentFactures = await prisma.facture.findMany({
-      take: 5,
-      orderBy: { date: 'desc' },
-      include: { client: true }
-    });
-
-    // Fetch last 6 months factures to generate chart data
-    const sixMonthsAgo = startOfMonth(subMonths(today, 5));
-    const facturesLast6Months = await prisma.facture.findMany({
-      where: { date: { gte: sixMonthsAgo } },
-      select: { date: true, totalAmount: true }
-    });
+    const revenusMoisPrecedent = totalFacturesMoisPrecedent._sum.totalAmount || 0;
 
     const monthsList = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
     const chartData = [];
@@ -67,25 +80,12 @@ export default async function DashboardPage() {
       });
     }
 
-    // Calculate growth (croissance) compared to last month
-    const previousMonthStart = startOfMonth(subMonths(today, 1));
-    const previousMonthEnd = endOfDay(subMonths(today, 1)); // Actually end of previous month
-
-    const totalFacturesMoisPrecedent = await prisma.facture.aggregate({
-      _sum: { totalAmount: true },
-      where: { date: { gte: previousMonthStart, lt: startMonth } }
-    });
-    const revenusMoisPrecedent = totalFacturesMoisPrecedent._sum.totalAmount || 0;
-    
     let croissanceRevenus = 0;
     if (revenusMoisPrecedent === 0 && revenusMois > 0) croissanceRevenus = 100;
     else if (revenusMoisPrecedent > 0) {
       croissanceRevenus = Math.round(((revenusMois - revenusMoisPrecedent) / revenusMoisPrecedent) * 100);
     }
 
-    const clientsMoisPrecedent = await prisma.client.count({
-      where: { createdAt: { gte: previousMonthStart, lt: startMonth } }
-    });
     let croissanceClients = 0;
     if (clientsMoisPrecedent === 0 && nouveauxClients > 0) croissanceClients = 100;
     else if (clientsMoisPrecedent > 0) {
