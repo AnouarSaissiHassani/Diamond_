@@ -6,7 +6,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-let connectionString = process.env.SUPABASE_URL || process.env.DATABASE_URL || '';
+let connectionString = process.env.SUPABASE_URL || process.env.DATABASE_URL || process.env.POSTGRES_URL || '';
 // Clean up pgbouncer=true and force port 5432 (Session pooler) because pg driver requires prepared statements
 // which the Supabase transaction pooler (6543) does not support.
 if (connectionString.includes('supabase.com')) {
