@@ -53,8 +53,8 @@ export default function Footer() {
             <h3 className="font-serif font-medium text-lg mb-4">Nous Rendre Visite</h3>
             <address className="not-italic text-sm text-[#6b645c] space-y-2">
               <p>Agadir, Maroc</p>
-              <p className="pt-2">diamondskinclinic55@gmail.com</p>
-              <p>+212 6 65 38 50 51 | +212 5 25 41 09 61S</p>
+              <p className="pt-2">diamondskinclinic12@gmail.com</p>
+              <p>+212 6 65 38 50 51 | +212 5 25 41 09 61</p>
             </address>
           </div>
         </div>

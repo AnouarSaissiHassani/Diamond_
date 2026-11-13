@@ -140,7 +140,7 @@ export default async function RendezVous() {
                   </div>
                   <div>
                     <p className="text-stone-400 uppercase mb-1" style={{ fontSize: 9, letterSpacing: "0.3em" }}>Téléphone</p>
-                    <p className="text-stone-700 text-sm">+212 6 65 38 50 51 | +212 5 25 41 09 61S</p>
+                    <p className="text-stone-700 text-sm">+212 6 65 38 50 51 | +212 5 25 41 09 61</p>
                   </div>
                 </div>
 
@@ -153,7 +153,7 @@ export default async function RendezVous() {
                   </div>
                   <div>
                     <p className="text-stone-400 uppercase mb-1" style={{ fontSize: 9, letterSpacing: "0.3em" }}>Email</p>
-                    <p className="text-stone-700 text-sm">diamondskinclinic55@gmail.com</p>
+                    <p className="text-stone-700 text-sm">diamondskinclinic12@gmail.com</p>
                   </div>
                 </div>
 

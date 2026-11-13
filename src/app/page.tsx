@@ -402,7 +402,7 @@ export default function Home() {
                 <Phone className="h-5 w-5" />
               </div>
               <h3 className="font-['Playfair_Display',serif] text-xl mb-2 text-[#2a2826]">Contact</h3>
-              <p className="text-[#6b645c] font-light">+212 6 65 38 50 51 | +212 5 25 41 09 61S<br />diamondskinclinic55@gmail.com</p>
+              <p className="text-[#6b645c] font-light">+212 6 65 38 50 51 | +212 5 25 41 09 61<br />diamondskinclinic12@gmail.com</p>
             </motion.div>
           </div>
         </div>
