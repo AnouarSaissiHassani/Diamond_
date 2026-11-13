@@ -6,11 +6,27 @@ import BookingForm from "./BookingForm";
 
 export const dynamic = "force-dynamic";
 
+const FALLBACK_TREATMENTS = [
+  { id: "peeling-chimique", name: "Peeling Chimique" },
+  { id: "soin-hydrafacial", name: "Soin Hydrafacial" },
+  { id: "microneedling", name: "Microneedling" },
+];
+
 export default async function RendezVous() {
-  const treatments = await prisma.treatment.findMany({
-    select: { id: true, name: true },
-    orderBy: { name: 'asc' }
-  });
+  let treatments = FALLBACK_TREATMENTS;
+
+  try {
+    const dbTreatments = await prisma.treatment.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+    });
+    if (dbTreatments && dbTreatments.length > 0) {
+      treatments = dbTreatments;
+    }
+  } catch (error) {
+    console.error("Failed to fetch treatments from database:", error);
+  }
+
 
   return (
     <div style={{ backgroundColor: "#faf8f5" }}>

@@ -52,14 +52,35 @@ export async function submitPublicReservation(data: PublicReservationData) {
       }
     }
 
-    // 4. Créer la réservation
+    // 4. Vérifier si le soin existe dans la base
+    let validTreatmentId: string | null = null;
+    let treatmentNote = "";
+    if (data.treatmentId) {
+      try {
+        const found = await prisma.treatment.findUnique({
+          where: { id: data.treatmentId },
+          select: { id: true, name: true },
+        });
+        if (found) {
+          validTreatmentId = found.id;
+        } else {
+          treatmentNote = ` [Soin: ${data.treatmentId}]`;
+        }
+      } catch {
+        treatmentNote = ` [Soin: ${data.treatmentId}]`;
+      }
+    }
+
+    // 5. Créer la réservation
     await prisma.reservation.create({
       data: {
         clientId: client.id,
-        treatmentId: data.treatmentId || null,
+        treatmentId: validTreatmentId,
         date: reservationDate,
         status: "PENDING",
-        notes: data.message ? `Demande via site web: ${data.message}` : "Demande via site web",
+        notes: data.message
+          ? `Demande via site web${treatmentNote}: ${data.message}`
+          : `Demande via site web${treatmentNote}`,
       }
     });
 
