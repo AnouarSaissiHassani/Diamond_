@@ -13,15 +13,12 @@ export default async function DashboardPage() {
   const previousMonthStart = startOfMonth(subMonths(today, 1));
 
   try {
-    // Fetch all stats in parallel to avoid Netlify 10s function timeout
+    // Fetch stats in two small batches to respect serverless connection pool limits
     const [
       totalFacturesMois,
       nouveauxClients,
       rdvMois,
       rdvAttente,
-      todayReservations,
-      recentFactures,
-      facturesLast6Months,
       totalFacturesMoisPrecedent,
       clientsMoisPrecedent
     ] = await Promise.all([
@@ -38,6 +35,20 @@ export default async function DashboardPage() {
       prisma.reservation.count({
         where: { status: "PENDING" }
       }),
+      prisma.facture.findMany({
+        where: { date: { gte: previousMonthStart, lt: startMonth } },
+        select: { totalAmount: true }
+      }),
+      prisma.client.count({
+        where: { createdAt: { gte: previousMonthStart, lt: startMonth } }
+      })
+    ]);
+
+    const [
+      todayReservations,
+      recentFactures,
+      facturesLast6Months
+    ] = await Promise.all([
       prisma.reservation.findMany({
         where: { date: { gte: startDay, lte: endDay } },
         include: { client: true, treatment: true },
@@ -51,13 +62,6 @@ export default async function DashboardPage() {
       prisma.facture.findMany({
         where: { date: { gte: sixMonthsAgo } },
         select: { date: true, totalAmount: true }
-      }),
-      prisma.facture.findMany({
-        where: { date: { gte: previousMonthStart, lt: startMonth } },
-        select: { totalAmount: true }
-      }),
-      prisma.client.count({
-        where: { createdAt: { gte: previousMonthStart, lt: startMonth } }
       })
     ]);
 
